@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Operasi Kado Mandiri 🎂</title>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --primary-dark: #c9184a;
+            --secondary: #ffb3c1;
+            --bg-dark: #1f121e;
+            --panel-bg: rgba(34, 16, 33, 0.94);
+            --text-light: #fff0f3;
+            --accent-gold: #ffd166;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 10px;
+        }
+
+        /* ================= TOP BAR AUDIO & NAV ================= */
+        .top-bar {
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 77, 109, 0.35);
+            border-radius: 12px;
+            padding: 8px 14px;
+            margin-bottom: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .bgm-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--secondary);
+        }
+
+        .music-bars {
+            display: flex;
+            align-items: flex-end;
+            height: 14px;
+            gap: 2px;
+        }
+
+        .music-bars span {
+            width: 3px;
+            background: var(--primary);
+            animation: bounceBar 0.8s infinite ease-in-out;
+        }
+        .music-bars.paused span {
+            animation: none;
+            height: 3px !important;
+        }
+        .music-bars span:nth-child(1) { height: 6px; animation-delay: 0s; }
+        .music-bars span:nth-child(2) { height: 14px; animation-delay: 0.2s; }
+        .music-bars span:nth-child(3) { height: 9px; animation-delay: 0.4s; }
+        .music-bars span:nth-child(4) { height: 12px; animation-delay: 0.1s; }
+
+        @keyframes bounceBar {
+            0%, 100% { height: 4px; }
+            50% { height: 14px; }
+        }
+
+        .audio-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-mini {
+            background: #3d1c3a;
+            color: var(--text-light);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-mini:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-mini.off {
+            opacity: 0.5;
+            border-color: #777;
+        }
+
+        /* ================= VISUAL NOVEL CONTAINER ================= */
+        #vnWrapper {
+            width: 100%;
+            max-width: 960px;
+            background: #2a1628;
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+
+        .scene-header {
+            background: linear-gradient(90deg, #590d22, #800f2f);
+            padding: 10px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .scene-title {
+            font-weight: bold;
+            font-size: 15px;
+            color: var(--accent-gold);
+        }
+
+        .scene-loc {
+            font-size: 12px;
+            color: #ffccd5;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        /* Stage Visual SVG */
+        .stage {
+            width: 100%;
+            height: 355px;
+            position: relative;
+            overflow: hidden;
+            background: #1a1025;
+        }
+
+        #stageSvg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        @keyframes charBob {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
+        .char-speaking {
+            animation: charBob 1.6s ease-in-out infinite;
+        }
+
+        /* Dialogue Box */
+        .dialogue-area {
+            background: var(--panel-bg);
+            padding: 18px 22px;
+            border-top: 2px solid var(--primary);
+            min-height: 185px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .speaker-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            width: fit-content;
+            letter-spacing: 0.5px;
+        }
+
+        .speaker-laila { background: #ff4d6d; color: #fff; }
+        .speaker-naufal { background: #3a86ff; color: #fff; }
+        .speaker-narrator { background: #6c584c; color: #f5ebe0; }
+
+        .dialogue-text {
+            font-size: 16px;
+            line-height: 1.65;
+            color: #fff0f3;
+            min-height: 78px;
+        }
+
+        /* Branching Choices */
+        .choices-box {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .choice-btn {
+            background: linear-gradient(135deg, #590d22, #800f2f);
+            border: 2px solid var(--accent-gold);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: left;
+            transition: transform 0.15s, background 0.2s;
+        }
+        .choice-btn:hover {
+            background: linear-gradient(135deg, #ff4d6d, #c9184a);
+            transform: translateX(6px);
+        }
+
+        /* VN Controls */
+        .vn-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 14px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 8px;
+        }
+
+        .nav-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-vn {
+            background: #4a1942;
+            color: #ffccd5;
+            border: 1px solid var(--primary);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-vn:hover:not(:disabled) {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-vn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: #fff;
+            padding: 8px 20px;
+        }
+
+        /* Start Overlay */
+        #startOverlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(25, 11, 24, 0.94);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 25px;
+        }
+
+        #startOverlay h1 {
+            font-size: clamp(22px, 4vw, 32px);
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            text-shadow: 0 3px 12px rgba(255, 77, 109, 0.6);
+        }
+
+        #startOverlay p {
+            color: var(--secondary);
+            max-width: 520px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+
+        .btn-big-start {
+            background: linear-gradient(135deg, #ff4d6d, #c9184a);
+            color: #fff;
+            border: 2px solid var(--accent-gold);
+            padding: 14px 32px;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 77, 109, 0.5);
+            transition: transform 0.2s;
+        }
+        .btn-big-start:hover {
+            transform: scale(1.05);
+        }
+
+        /* Side Quest Prompt Overlay */
+        #questIntroOverlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(22, 10, 22, 0.95);
+            z-index: 25;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .quest-badge {
+            background: var(--accent-gold);
+            color: #2b1d2f;
+            font-weight: 800;
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* ================= LOG MODAL ================= */
+        #logModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .log-content {
+            background: #2b1529;
+            border: 2px solid var(--primary);
+            border-radius: 14px;
+            width: 100%;
+            max-width: 650px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .log-header {
+            padding: 14px 18px;
+            background: #590d22;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .log-body {
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .log-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .log-item strong {
+            color: var(--accent-gold);
+            display: block;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+
+        /* ================= MINI-GAME SIDE QUEST ================= */
+        #gameWrapper {
+            display: none;
+            width: 100%;
+            max-width: 960px;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Courier New', Courier, monospace;
+            animation: fadeIn 0.5s ease;
+        }
+
+        #gameWrapper h1 {
+            margin-bottom: 4px;
+            color: #ff4d6d;
+            text-shadow: 2px 2px #590d22;
+            font-size: clamp(18px, 4vw, 26px);
+            text-align: center;
+        }
+
+        .instructions {
+            margin-bottom: 10px;
+            font-size: clamp(11px, 2.5vw, 13px);
+            color: #ff8fa3;
+            text-align: center;
+        }
+
+        .canvas-container {
+            width: 100%;
+            max-width: 900px;
+            overflow-x: auto;
+            border: 3px solid #ff4d6d;
+            border-radius: 12px;
+            background-color: #381d2a;
+            box-shadow: 0 0 25px rgba(255, 77, 109, 0.4);
+        }
+
+        canvas {
+            display: block;
+            background-color: #381d2a;
+            outline: none;
+            width: 1800px;
+            height: 400px;
+        }
+
+        .mobile-controls {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 12px;
+            gap: 10px;
+        }
+
+        .dpad-left {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ctrl-btn {
+            background: #590d22;
+            border: 2px solid #ff4d6d;
+            color: #ffccd5;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 10px;
+            width: 65px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            touch-action: manipulation;
+            box-shadow: 0 4px 0 #ff4d6d;
+        }
+        .ctrl-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #ff4d6d;
+            background: #ff4d6d;
+            color: #fff;
+        }
+
+        .jump-btn {
+            width: 120px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        /* Modal Pop-up Romantis & Surat Spesial */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #381d2a;
+            border: 3px solid #ff4d6d;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+            z-index: 60;
+            max-width: 530px;
+            width: 92%;
+            max-height: 88vh;
+            overflow-y: auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .modal h2 { color: #ffb3c1; margin-bottom: 12px; font-size: 22px; text-shadow: 1px 1px #590d22; }
+        .modal p { font-size: 14px; line-height: 1.65; margin-bottom: 15px; color: #fff0f3; text-align: left; }
+
+        .revealed-wishes {
+            background: #2b1d2f;
+            border: 2px dashed #ff4d6d;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            text-align: left;
+        }
+        .revealed-wishes h3 {
+            color: #ffd166;
+            font-size: 15px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .revealed-wishes ul {
+            list-style: none;
+            padding-left: 5px;
+        }
+        .revealed-wishes li {
+            font-size: 13px;
+            margin-bottom: 8px;
+            color: #ffccd5;
+            line-height: 1.45;
+        }
+
+        .modal-btn-group {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .btn-restart {
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 4px 0 #800f2f;
+            transition: 0.15s;
+        }
+        .btn-restart:hover { background: #c9184a; }
+
+        .btn-secondary-modal {
+            background: #4a1942;
+            color: #ffccd5;
+            border: 1px solid #ff4d6d;
+            padding: 10px 14px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: 0.15s;
+        }
+        .btn-secondary-modal:hover {
+            background: #ff4d6d;
+            color: #fff;
+        }
+
+        .btn-gold-modal {
+            background: #d4ac0d;
+            color: #2b1d2f;
+            border: 1px solid #ffd166;
+            padding: 10px 14px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 4px 0 #9a7d0a;
+            transition: 0.15s;
+        }
+        .btn-gold-modal:hover {
+            background: #ffd166;
+        }
+
+        /* Styling Modal Surat Khusus */
+        #letterModal {
+            background: #2b172a;
+            border: 3px solid #ffd166;
+            max-width: 600px;
+            text-align: left;
+        }
+        #letterModal h2 {
+            color: #ffd166;
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 20px;
+            border-bottom: 1px dashed rgba(255, 209, 102, 0.4);
+            padding-bottom: 12px;
+        }
+        .letter-body {
+            font-size: 14px;
+            line-height: 1.75;
+            color: #fff0f3;
+            max-height: 52vh;
+            overflow-y: auto;
+            padding-right: 5px;
+            white-space: pre-line;
+        }
+        .letter-sign {
+            margin-top: 18px;
+            text-align: right;
+            font-style: italic;
+            color: #ffd166;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP AUDIO & STATUS BAR -->
+    <div class="top-bar">
+        <div class="bgm-status">
+            <div class="music-bars paused" id="musicBars">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <span id="bgmLabel">BGM: Siap Diputar</span>
+        </div>
+        <div class="audio-controls">
+            <button class="btn-mini" id="toggleBgmBtn" onclick="toggleBGM()">🎵 BGM: ON</button>
+            <button class="btn-mini" id="toggleSfxBtn" onclick="toggleSFX()">🔊 SFX: ON</button>
+            <button class="btn-mini" id="openLogBtn" onclick="openLog()">📜 Riwayat</button>
+        </div>
+    </div>
+
+    <!-- ================= VISUAL NOVEL SECTION ================= -->
+    <div id="vnWrapper">
+        <!-- Start Screen Overlay -->
+        <div id="startOverlay">
+            <div class="quest-badge">SPECIAL BIRTHDAY VISUAL NOVEL</div>
+            <h1>Operasi Kado Mandiri 🎁</h1>
+            <p>
+                Ikuti kisah spesial menjelang hari ulang tahun Laila, tentukan pilihanmu, dan selesaikan misi rahasia di akhir cerita untuk membuka ucapan spesial!
+            </p>
+            <button class="btn-big-start" onclick="startVN()">Mulai Cerita ▶️</button>
+        </div>
+
+        <!-- Side Quest Transition Overlay -->
+        <div id="questIntroOverlay">
+            <div class="quest-badge">✨ SECRET SIDE QUEST TERBUKA ✨</div>
+            <h2 style="color: var(--accent-gold); font-size: 24px; margin-bottom: 10px;">
+                Misi Terakhir: Our Journey to Forever ❤️🎂
+            </h2>
+            <p style="color: #ffccd5; max-width: 520px; line-height: 1.6; margin-bottom: 22px; font-size: 15px;">
+                Kado fisik di kasir sudah beres, tapi masih ada <b>1 kejutan lagi</b>! Kumpulkan <b>3 Ikon Rahasia</b> di sepanjang perjalanan dan hindari rintangan untuk membuka kue ulang tahun serta pesan rahasia dari Naufal.
+            </p>
+            <button class="btn-big-start" onclick="launchSideQuest()">Mulai Side Quest 🎮</button>
+        </div>
+
+        <div class="scene-header">
+            <div class="scene-title" id="sceneTitle">Scene 1: H-1 Ulang Tahun</div>
+            <div class="scene-loc" id="sceneLoc">📍 Kamar tidur Laila</div>
+        </div>
+
+        <!-- Dynamic SVG Illustration Stage -->
+        <div class="stage">
+            <svg id="stageSvg" viewBox="0 0 800 340" preserveAspectRatio="xMidYMid slice"></svg>
+        </div>
+
+        <!-- Dialogue & Choices Box -->
+        <div class="dialogue-area" onclick="handleDialogueClick(event)">
+            <div>
+                <div class="speaker-badge speaker-laila" id="speakerBadge">Laila</div>
+                <div class="dialogue-text" id="dialogueText"></div>
+                <div class="choices-box" id="choicesBox">
+                    <button class="choice-btn" onclick="chooseRoute('A', event)">
+                        🔀 [PILIH OPSI A: Ngambek Manis] ➔ Lanjut ke Rute A
+                    </button>
+                    <button class="choice-btn" onclick="chooseRoute('B', event)">
+                        🔀 [PILIH OPSI B: Balas Dendam] ➔ Lanjut ke Rute B
+                    </button>
+                </div>
+            </div>
+
+            <div class="vn-controls" onclick="event.stopPropagation()">
+                <div class="nav-group">
+                    <button class="btn-vn" id="btnPrev" onclick="prevStep()">◀ Kembali</button>
+                    <button class="btn-vn" id="btnAuto" onclick="toggleAuto()">⏩ Auto: OFF</button>
+                </div>
+                <button class="btn-vn btn-next" id="btnNext" onclick="nextStep()">Lanjut ▶</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MINI-GAME SIDE QUEST SECTION ================= -->
+    <div id="gameWrapper">
+        <h1>💖 OUR JOURNEY TO FOREVER 💖</h1>
+        <div class="instructions">
+            Kumpulkan 3 Ikon Rahasia di sepanjang perjalanan untuk membuka kue ulang tahun! Hindari rintangan ⚡.
+        </div>
+
+        <div class="canvas-container" id="canvasContainer">
+            <canvas id="gameCanvas" width="1800" height="400" tabindex="1"></canvas>
+        </div>
+
+        <!-- Kontrol Sentuh HP -->
+        <div class="mobile-controls">
+            <div class="dpad-left">
+                <button class="ctrl-btn" id="btnLeft">⬅️</button>
+                <button class="ctrl-btn" id="btnRight">➡️</button>
+            </div>
+            <button class="ctrl-btn jump-btn" id="btnJump">⬆️ LOMPAT</button>
+        </div>
+    </div>
+
+    <!-- Modal Ulang Tahun & Pesan Romantis (Pop-up Game dengan 3 Tombol) -->
+    <div id="wishModal" class="modal">
+        <h2>🎉 HAPPY BIRTHDAY, SAYANG! 💕</h2>
+        <p>
+            Semua rintangan dan perjalanan panjang berhasil kita lewati! Inilah makna dari 3 ikon yang baru saja kamu kumpulkan untuk masa depan kita:
+        </p>
+
+        <div class="revealed-wishes">
+            <h3>✨ 3 HARAPAN UNTUK KITA ✨</h3>
+            <ul>
+                <li>❤️ <b>Kesehatan:</b> Selalu diberikan raga yang bugar, kuat, dan bahagia di setiap langkah kita.</li>
+                <li>💼 <b>Karir:</b> Rezeki makin lancar, sukses, dan penuh berkah dalam setiap pekerjaan maupun impianmu.</li>
+                <li>💍 <b>Pernikahan:</b> Dimudahkan dan dilancarkan langkah kita menuju ikatan suci selamanya.</li>
+            </ul>
+        </div>
+
+        <p style="text-align: center; font-size: 13px; font-style: italic; color: #ff8fa3;">
+            "Terima kasih sudah menjadi alasan di balik senyuman terindahku. I love you so much!" 🚀✨🌹
+        </p>
+
+        <div class="modal-btn-group">
+            <button class="btn-gold-modal" onclick="openLetterModal()">💌 Surat Spesial</button>
+            <button class="btn-restart" onclick="restartGame()">🔄 Main Quest Lagi</button>
+            <button class="btn-secondary-modal" onclick="replayFullVN()">📖 Kembali ke Awal</button>
+        </div>
+    </div>
+
+    <!-- Modal Surat Ucapan Ulang Tahun Tambahan -->
+    <div id="letterModal" class="modal">
+        <h2>💌 SURAT SPESIAL ULANG TAHUN 💌</h2>
+        
+        <div class="letter-body">Kepada Laila Quthratun Nada (alias Lail, Lele, Lala, atau yang lainnya—tergantung mood kamu hari ini),
+<i>Kekasihku yang katanya manusia paling krisis nama panggilan sejak kecil,</i>
+
+Selamat ulang tahun ya....cieee jadi tambah tua😜. Selamat Anda resmi masuk ke usia seperempat abad! Tenang saja, sekarang kita resmi berada di klub umur yang sama. Kamu boleh minta nasehat sama <i>mas WALI</i> yang sudah berpengalaman jadi manusia seperempat abad.
+
+Pertama-tama, aku mau minta maaf yang sebesar-besarnya buat ulang tahun kemarin yaaa. Maaf ya kalau rangkaian acaramu kemarin jauh dari kata romantis, nggak ada drama surprise mata ditutup kain hitam ala drakor. Malah jadi acara servis hp & pilih kado mandiri. Itupun kamu tak bikin ngomel-ngomel mulu karena menggoyahkan setiap barang yang mau kau pilih wkwk.
+
+Walaupun kemarin kamu akhirnya berhasil bawa pulang kado yang katanya memang sedang kamu butuhkan (dan sukses bikin dompetku menangis di ujung tanduk😰), aku sadar banget... kado kemarin mungkin masih terasa kurang.
+
+Kenapa kurang? Karena aku tahu persis, sedalam-dalamnya isi wishlist belanjaanmu, kado paling mewah, paling sakral, dan paling ingin kamu dapatkan di usia seperempat abad ini sebenarnya bukan barang-barang itu.
+
+Kado yang paling kamu inginkan... ya pernikahan kita nanti. (Cieee!)
+
+Tenang, Sayang... pelan-pelan semoga kita bisa persiapkan semuanya dengan matang, ya. Biar nanti di hari H yang sesungguhnya, bukan cuma kado atau kejutannya saja yang bikin kamu bahagia, tapi juga aku yang berdiri di sampingmu selamanya.
+
+Terima kasih sudah lahir ke dunia, terima kasih sudah jadi perempuan paling sabar yang mau membersamai dan menghadapi segala kelakuanku yang kadang ada-ada saja ini.
+
+Semoga di usia 25 tahun ini, semua impianmu tercapai, urusannya dimudahkan, makin sayang sama aku, dan semoga kita bisa segera melangkah ke tahap berikutnya sampe bisa menikah & maut memisahkan...
+
+Selamat ulang tahun ya, jangan lupa bahagia terus, and I love you so much! ❤️</div>
+
+        <div class="letter-sign">
+            Tertanda,<br>
+            <strong>Tamhorrun Lafuan</strong>
+        </div>
+
+        <div class="modal-btn-group" style="margin-top: 20px;">
+            <button class="btn-restart" onclick="closeLetterModal()">Tutup Surat ✖</button>
+            <button class="btn-secondary-modal" onclick="replayFullVN()">📖 Kembali ke Awal</button>
+        </div>
+    </div>
+
+    <!-- History Log Modal -->
+    <div id="logModal" onclick="closeLog()">
+        <div class="log-content" onclick="event.stopPropagation()">
+            <div class="log-header">
+                <span>📜 Riwayat Percakapan</span>
+                <button class="btn-mini" onclick="closeLog()">✖ Tutup</button>
+            </div>
+            <div class="log-body" id="logBody"></div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           1. PROCEDURAL WEB AUDIO ENGINE (BGM PER SCENE & SFX)
+           ========================================================================== */
+        let audioCtx = null;
+        let bgmEnabled = true;
+        let sfxEnabled = true;
+        let currentBgmTrack = null;
+        let bgmTimer = null;
+        let noteStep = 0;
+
+        const BGM_TRACKS = {
+            night: {
+                name: "Music Box Malam (H-1)",
+                tempo: 420,
+                type: "sine",
+                vol: 0.06,
+                notes: [523.25, 659.25, 783.99, 987.77, 783.99, 659.25, 587.33, 783.99, 880.00, 783.99, 659.25, 523.25]
+            },
+            hills_chill: {
+                name: "Angin Sejuk Perbukitan",
+                tempo: 350,
+                type: "triangle",
+                vol: 0.065,
+                notes: [392.00, 493.88, 587.33, 659.25, 783.99, 659.25, 587.33, 493.88, 440.00, 523.25, 659.25, 587.33]
+            },
+            hills_suspense: {
+                name: "Detektif Kado di Bukit",
+                tempo: 260,
+                type: "triangle",
+                vol: 0.07,
+                notes: [329.63, 349.23, 369.99, 392.00, 369.99, 349.23, 329.63, 293.66]
+            },
+            comedy: {
+                name: "Tender Proyek Komedi",
+                tempo: 220,
+                type: "square",
+                vol: 0.035,
+                notes: [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 293.66, 349.23, 440.00, 392.00]
+            },
+            protest: {
+                name: "Protes Baginda Ratu",
+                tempo: 200,
+                type: "sawtooth",
+                vol: 0.03,
+                notes: [440.00, 415.30, 440.00, 523.25, 493.88, 440.00, 392.00, 440.00]
+            },
+            route_a: {
+                name: "Wishlist Bossa Nova",
+                tempo: 300,
+                type: "triangle",
+                vol: 0.06,
+                notes: [349.23, 440.00, 523.25, 659.25, 587.33, 493.88, 392.00, 523.25]
+            },
+            route_b: {
+                name: "Misi Dompet Menangis",
+                tempo: 170,
+                type: "square",
+                vol: 0.035,
+                notes: [329.63, 392.00, 493.88, 659.25, 622.25, 587.33, 523.25, 493.88]
+            },
+            ending: {
+                name: "Happy Birthday Finale",
+                tempo: 280,
+                type: "triangle",
+                vol: 0.07,
+                notes: [392.00, 392.00, 440.00, 392.00, 523.25, 493.88, 392.00, 392.00, 440.00, 392.00, 587.33, 523.25]
+            },
+            quest: {
+                name: "Chiptune Journey Adventure",
+                tempo: 185,
+                type: "square",
+                vol: 0.035,
+                notes: [523.25, 659.25, 783.99, 1046.50, 783.99, 659.25, 587.33, 698.46, 880.00, 783.99]
+            }
+        };
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(freq, type, duration, vol) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(vol, audioCtx.currentTime + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function setBGM(trackKey) {
+            if (currentBgmTrack === trackKey && bgmTimer) return;
+            currentBgmTrack = trackKey;
+            const track = BGM_TRACKS[trackKey];
+            if (!track) return;
+
+            document.getElementById("bgmLabel").textContent = "BGM: " + track.name;
+            if (bgmTimer) clearInterval(bgmTimer);
+            noteStep = 0;
+
+            if (!bgmEnabled) {
+                document.getElementById("musicBars").classList.add("paused");
+                return;
+            }
+
+            document.getElementById("musicBars").classList.remove("paused");
+            bgmTimer = setInterval(() => {
+                if (!bgmEnabled || !audioCtx) return;
+                const freq = track.notes[noteStep % track.notes.length];
+                playTone(freq, track.type, (track.tempo / 1000) * 0.9, track.vol);
+                noteStep++;
+            }, track.tempo);
+        }
+
+        function toggleBGM() {
+            initAudio();
+            bgmEnabled = !bgmEnabled;
+            const btn = document.getElementById("toggleBgmBtn");
+            btn.textContent = bgmEnabled ? "🎵 BGM: ON" : "🎵 BGM: OFF";
+            btn.classList.toggle("off", !bgmEnabled);
+
+            if (bgmEnabled && currentBgmTrack) {
+                const key = currentBgmTrack;
+                currentBgmTrack = null;
+                setBGM(key);
+            } else {
+                if (bgmTimer) clearInterval(bgmTimer);
+                bgmTimer = null;
+                document.getElementById("musicBars").classList.add("paused");
+            }
+        }
+
+        function toggleSFX() {
+            initAudio();
+            sfxEnabled = !sfxEnabled;
+            const btn = document.getElementById("toggleSfxBtn");
+            btn.textContent = sfxEnabled ? "🔊 SFX: ON" : "🔇 SFX: OFF";
+            btn.classList.toggle("off", !sfxEnabled);
+        }
+
+        function playSFX(kind) {
+            if (!sfxEnabled) return;
+            initAudio();
+            if (kind === "click") playTone(620, "sine", 0.08, 0.08);
+            else if (kind === "choice") {
+                playTone(523.25, "triangle", 0.12, 0.1);
+                setTimeout(() => playTone(783.99, "triangle", 0.18, 0.1), 90);
+            } else if (kind === "jump") {
+                playTone(320, "square", 0.12, 0.06);
+                setTimeout(() => playTone(520, "square", 0.14, 0.06), 60);
+            } else if (kind === "collect") {
+                playTone(659.25, "sine", 0.1, 0.12);
+                setTimeout(() => playTone(987.77, "sine", 0.2, 0.12), 80);
+            } else if (kind === "hit") {
+                playTone(180, "sawtooth", 0.25, 0.1);
+            } else if (kind === "win") {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((n, idx) => {
+                    setTimeout(() => playTone(n, "triangle", 0.25, 0.12), idx * 120);
+                });
+            }
+        }
+
+        /* ==========================================================================
+           2. VISUAL NOVEL SCRIPT & DETAILED EXPRESSIVE SVG RENDERER
+           ========================================================================== */
+        const VN_SCRIPT = [
+            // SCENE 1
+            {
+                id: 0,
+                scene: "Scene 1: H-1 Ulang Tahun (Malam Penuh Ekspektasi)",
+                loc: "📍 Kamar tidur Laila, malam hari menjelang 16 November",
+                bg: "bedroom",
+                bgm: "night",
+                laila: "excited",
+                naufal: "none",
+                prop: "dream_gift",
+                speaker: "Laila",
+                speakerType: "laila",
+                text: "\"Duh, besok kan aku ulang tahun... Rasanya nggak sabar banget! Besok pasti dia udah nyiapin tempat jalan-jalan yang estetik, makan enak, terus tiba-tiba ngeluarin kotak kado misterius berukuran besar dengan pita merah. Ah, indahnya jadi ratu sehari!\"",
+                next: 1
+            },
+            {
+                id: 1,
+                scene: "Scene 1: H-1 Ulang Tahun (Malam Penuh Ekspektasi)",
+                loc: "📍 Kamar tidur Laila, malam hari menjelang 16 November",
+                bg: "bedroom",
+                bgm: "night",
+                laila: "happy",
+                naufal: "none",
+                prop: "sleepy",
+                speaker: "Laila",
+                speakerType: "laila",
+                text: "\"Pokoknya tidur cepat deh, biar besok nggak kesiangan nyambut kejutan!\"",
+                next: 2
+            },
+
+            // SCENE 2 (Latar Wisata Perbukitan Menyejukkan)
+            {
+                id: 2,
+                scene: "Scene 2: Hari H - Pemandangan Sejuk & Kegelisahan Dimulai",
+                loc: "📍 Wisata Perbukitan Sejuk di Hari-H",
+                bg: "hills",
+                bgm: "hills_chill",
+                laila: "curious",
+                naufal: "chill",
+                prop: "empty_hands",
+                speaker: "Laila",
+                speakerType: "laila",
+                text: "\"Wah, pemandangannya seger banget... Hijau, adem, anginnya sepoi-sepoi. Tapi tunggu dulu... Kok dari tadi jalan-jalan mulu, nggak ada tanda-tanda kotak kado atau surprise apa gitu?\"",
+                next: 3
+            },
+            {
+                id: 3,
+                scene: "Scene 2: Hari H - Pemandangan Sejuk & Kegelisahan Dimulai",
+                loc: "📍 Wisata Perbukitan Sejuk di Hari-H",
+                bg: "hills",
+                bgm: "hills_suspense",
+                laila: "glare",
+                naufal: "chill",
+                prop: "empty_hands",
+                speaker: "Narator",
+                speakerType: "narrator",
+                text: "Laila melirik tajam ke arah tangan Naufal yang kosong melompong.",
+                next: 4
+            },
+            {
+                id: 4,
+                scene: "Scene 2: Hari H - Pemandangan Sejuk & Kegelisahan Dimulai",
+                loc: "📍 Wisata Perbukitan Sejuk di Hari-H",
+                bg: "hills",
+                bgm: "hills_suspense",
+                laila: "glare",
+                naufal: "sweat",
+                prop: "empty_hands",
+                speaker: "Laila",
+                speakerType: "laila",
+                text: "\"Ehm... Halo, Mas Pacar? Kayaknya ada yang kurang deh dari pemandangan indah ini. Mana nih kado buat aku?\"",
+                next: 5
+            },
+
+            // SCENE 3
+            {
+                id: 5,
+                scene: "Scene 3: Pengakuan Dosa & \"Proyek Pengadaan Kado Mandiri\"",
+                loc: "📍 Masih di lokasi wisata perbukitan yang sama",
+                bg: "hills",
+                bgm: "comedy",
+                laila: "glare",
+                naufal: "grin",
+                prop: "empty_hands",
+                speaker: "Naufal",
+                speakerType: "naufal",
+                text: "Naufal nyengir tanpa dosa. \"Oh, kado? Hehe... Sebenarnya aku belum beli apa-apa sih.\"",
+                next: 6
+            },
+            {
+                id: 6,
+                scene: "Scene 3: Pengakuan Dosa & \"Proyek Pengadaan Kado Mandiri\"",
+                loc: "📍 Masih di lokasi wisata perbukitan yang sama",
+                bg: "hills",
+                bgm: "comedy",
+                laila: "shocked",
+                naufal: "grin",
+                prop: "shock_lines",
+                speaker: "Laila",
+                speakerType: "laila",
+                text: "Laila melotot kaget. \"HAH?! Belum beli?! Ini hari H lho! Kamu ke mana aja setahun kemarin?!\"",
+                next: 7
+            },
+            {
+                id: 7,
+                scene: "Scene 3: Pengakuan Dosa & \"Proyek Pengadaan Kado Mandiri\"",
+                loc: "📍 Masih di lokasi wisata perbukitan yang sama",
+                bg: "hills",
+                bgm: "comedy",
+                laila: "annoyed",
+                naufal: "proud",
+                prop: "tender_doc",
+                speaker: "Naufal",
+                speakerType: "naufal",
+                text: "\"Santai! Justru itu agenda inti kita hari ini. Kita buka tender resmi: Proyek Pengadaan Kado Mandiri,\" jawab Naufal santai. \"Kita langsung ke toko, kamu pilih sendiri barang yang kamu mau biar nggak zonk dan sesuai kebutuhanmu!\"",
+                next: 8
+            },
+
+            // SCENE 4
+            {
+                id: 8,
+                scene: "Scene 4: Protes Keras & Cabang Pilihan",
+                loc: "📍 Di dalam pusat perbelanjaan / toko",
+                bg: "store",
+                bgm: "protest",
+                laila: "pout_arms",
+                naufal: "chill",
+                prop: "none",
+                speaker: "Laila",
+                speakerType: "laila",
+                text: "Laila melipat tangan di dada dengan muka judes. \"Nggak romantis banget! Mana ada cewek ultah disuruh belanja sendiri kayak mandor proyek! Di mana letak deg-degan surprise-nya?!\"",
+                next: 9
+            },
+            {
+                id: 9,
+                scene: "Scene 4: Protes Keras & Cabang Pilihan",
+                loc: "📍 Di dalam pusat perbelanjaan / toko",
+                bg: "store",
+                bgm: "protest",
+                laila: "pout_arms",
+                naufal: "grin",
+                prop: "basket",
+                speaker: "Naufal",
+                speakerType: "naufal",
+                text: "Naufal menyodorkan keranjang belanja. \"Udah, daripada kamu kecewa dalam hati karena kadonya salah, mending real-time selection gini. Silakan dipilih, Baginda Ratu!\"",
+                isChoice: true
+            },
+
+            // RUTE A
+            {
+                id: 10,
+                scene: "Rute A: Ngambek Manis",
+                loc: "📍 Lorong etalase pusat perbelanjaan",
+                bg: "store",
+                bgm: "route_a",
+                laila: "sigh",
+                naufal: "chill",
+                prop: "basket",
+                speaker: "Narator",
+                speakerType: "narrator",
+                text: "Laila menghela napas panjang, lalu memasang wajah pasrah.",
+                next: 11
+            },
+            {
+                id: 11,
+                scene: "Rute A: Ngambek Manis",
+                loc: "📍 Lorong etalase pusat perbelanjaan",
+                bg: "store",
+                bgm: "route_a",
+                laila: "pout_cute",
+                naufal: "chill",
+                prop: "basket",
+                speaker: "Laila",
+                speakerType: "laila",
+                text: "\"Iya deh iya, yang penting dibayarin!\" kata Laila sambil menerima keranjang belanja.",
+                next: 12
+            },
+            {
+                id: 12,
+                scene: "Rute A: Ngambek Manis",
+                loc: "📍 Lorong etalase pusat perbelanjaan",
+                bg: "store",
+                bgm: "route_a",
+                laila: "focused",
+                naufal: "obedient",
+                prop: "wishlist",
+                speaker: "Narator",
+                speakerType: "narrator",
+                text: "Walaupun sempat sebal karena nggak ada unsur kejutannya, Laila akhirnya melangkah serius menyusuri etalase toko. Ia mulai teliti memilah-milah barang yang memang sudah lama masuk dalam daftar wishlist-nya. Naufal berjalan di belakangnya sambil membawakan tas dengan patuh tanpa berani protes.",
+                next: 16
+            },
+
+            // RUTE B
+            {
+                id: 13,
+                scene: "Rute B: Balas Dendam",
+                loc: "📍 Etalase barang incaran harga tertinggi",
+                bg: "store",
+                bgm: "route_b",
+                laila: "smirk",
+                naufal: "sweat",
+                prop: "basket",
+                speaker: "Laila",
+                speakerType: "laila",
+                text: "Mata Laila langsung berbinar licik. \"Awas ya kalau dompetmu jebol!\"",
+                next: 14
+            },
+            {
+                id: 14,
+                scene: "Rute B: Balas Dendam",
+                loc: "📍 Etalase barang incaran harga tertinggi",
+                bg: "store",
+                bgm: "route_b",
+                laila: "smirk",
+                naufal: "shocked",
+                prop: "luxury_box",
+                speaker: "Narator",
+                speakerType: "narrator",
+                text: "Tanpa butuh waktu lama, Laila langsung tancap gas berjalan menuju etalase barang paling diincar dengan harga paling tinggi. Tanpa ragu, ia mengambil barang tersebut dan memasukkannya ke dalam keranjang belanja.",
+                next: 15
+            },
+            {
+                id: 15,
+                scene: "Rute B: Balas Dendam",
+                loc: "📍 Etalase barang incaran harga tertinggi",
+                bg: "store",
+                bgm: "route_b",
+                laila: "laugh",
+                naufal: "panic",
+                prop: "crying_wallet",
+                speaker: "Naufal",
+                speakerType: "naufal",
+                text: "Naufal yang melihat harganya langsung menelan ludah, memegang dadanya sendiri, dan berbisik pelan, \"Duh... dompetku langsung menangis di ujung tanduk...\" Tawa kecil Laila pun langsung pecah melihat kepanikan kecil itu.",
+                next: 16
+            },
+
+            // SCENE 5 (ENDING)
+            {
+                id: 16,
+                scene: "Scene 5: Happy Ending (Selesai Pilih Kado)",
+                loc: "📍 Depan kasir toko",
+                bg: "cashier",
+                bgm: "ending",
+                laila: "beaming",
+                naufal: "resigned",
+                prop: "gift_box",
+                speaker: "Narator",
+                speakerType: "narrator",
+                text: "Setelah sibuk menimbang-nimbang dan mencocokkan barang pilihan, Laila akhirnya memegang kotak kado incarannya dengan senyum sumringah selebar-lebarnya.",
+                next: 17
+            },
+            {
+                id: 17,
+                scene: "Scene 5: Happy Ending (Selesai Pilih Kado)",
+                loc: "📍 Depan kasir toko",
+                bg: "cashier",
+                bgm: "ending",
+                laila: "beaming",
+                naufal: "resigned",
+                prop: "gift_box",
+                speaker: "Narator",
+                speakerType: "narrator",
+                text: "Walaupun awalnya sempat ngedumel karena sama sekali nggak romantis dan nggak ada unsur surprise-nya... nyatanya, bisa megang barang yang bener-bener lagi dibutuhin itu rasanya jauh lebih memuaskan daripada dikasih barang random yang zonk.",
+                next: 18
+            },
+            {
+                id: 18,
+                scene: "Scene 5: Happy Ending (Selesai Pilih Kado)",
+                loc: "📍 Depan kasir toko",
+                bg: "cashier",
+                bgm: "ending",
+                laila: "happy_wink",
+                naufal: "resigned",
+                prop: "gift_box",
+                speaker: "Narator",
+                speakerType: "narrator",
+                text: "Laila melirik Naufal yang sedang pasrah melihat total belanjaan di kasir, lalu tersenyum puas.",
+                next: 19
+            },
+            {
+                id: 19,
+                scene: "Scene 5: Happy Ending (Selesai Pilih Kado)",
+                loc: "📍 Depan kasir toko",
+                bg: "cashier",
+                bgm: "ending",
+                laila: "happy_wink",
+                naufal: "smile",
+                prop: "gift_box",
+                speaker: "Laila",
+                speakerType: "laila",
+                text: "\"Yaudah deh... Berhubung kadonya pas banget sama mauku, kemaafan resmi diberikan. Makasih ya kadonya!\" 😗",
+                isEndOfVN: true
+            }
+        ];
+
+        let currentStepId = 0;
+        let historyStack = [];
+        let readLog = [];
+        let typingInterval = null;
+        let isTyping = false;
+        let fullCurrentText = "";
+        let autoPlay = false;
+        let autoTimer = null;
+
+        function startVN() {
+            initAudio();
+            playSFX("click");
+            document.getElementById("startOverlay").style.display = "none";
+            currentStepId = 0;
+            historyStack = [];
+            readLog = [];
+            renderStep(0);
+        }
+
+        function renderBackgroundSVG(bgType) {
+            if (bgType === "bedroom") {
+                return `
+                    <defs>
+                        <linearGradient id="nightGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#141836"/>
+                            <stop offset="100%" stop-color="#2e234a"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="340" fill="url(#nightGrad)"/>
+                    <rect x="60" y="35" width="145" height="125" rx="8" fill="#0d1128" stroke="#6d597a" stroke-width="5"/>
+                    <circle cx="155" cy="70" r="18" fill="#ffd166"/>
+                    <circle cx="163" cy="65" r="15" fill="#0d1128"/>
+                    <circle cx="90" cy="60" r="2" fill="#fff"/>
+                    <circle cx="115" cy="95" r="2.5" fill="#fff"/>
+                    <circle cx="85" cy="120" r="1.5" fill="#fff"/>
+                    <line x1="132" y1="35" x2="132" y2="160" stroke="#6d597a" stroke-width="3"/>
+                    <line x1="60" y1="97" x2="205" y2="97" stroke="#6d597a" stroke-width="3"/>
+                    <rect x="615" y="45" width="92" height="88" rx="6" fill="#fff0f3" stroke="#ff4d6d" stroke-width="3"/>
+                    <rect x="615" y="45" width="92" height="24" rx="4" fill="#ff4d6d"/>
+                    <text x="661" y="61" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">16 NOV</text>
+                    <text x="661" y="104" fill="#590d22" font-size="25" font-weight="bold" text-anchor="middle">🎂</text>
+                    <rect x="0" y="250" width="800" height="90" fill="#4a2c40"/>
+                    <rect x="40" y="222" width="245" height="45" rx="15" fill="#ffccd5"/>
+                `;
+            } else if (bgType === "hills") {
+                return `
+                    <defs>
+                        <linearGradient id="hillSky" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#72efdd"/>
+                            <stop offset="45%" stop-color="#bde0fe"/>
+                            <stop offset="100%" stop-color="#e9edc9"/>
+                        </linearGradient>
+                        <linearGradient id="farMountain" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#52b788"/>
+                            <stop offset="100%" stop-color="#95d5b2"/>
+                        </linearGradient>
+                        <linearGradient id="midHill" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#40916c"/>
+                            <stop offset="100%" stop-color="#74c69d"/>
+                        </linearGradient>
+                        <linearGradient id="nearHill" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#2d6a4f"/>
+                            <stop offset="100%" stop-color="#52b788"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="340" fill="url(#hillSky)"/>
+                    <circle cx="670" cy="52" r="32" fill="#fff3b0" opacity="0.85"/>
+                    <g fill="#ffffff" opacity="0.78">
+                        <ellipse cx="160" cy="55" rx="45" ry="16"/>
+                        <ellipse cx="195" cy="50" rx="35" ry="14"/>
+                        <ellipse cx="440" cy="42" rx="50" ry="15"/>
+                        <ellipse cx="475" cy="48" rx="35" ry="12"/>
+                    </g>
+                    <path d="M 310 68 Q 317 61 324 68 Q 331 61 338 68" fill="none" stroke="#1b4332" stroke-width="2" opacity="0.6"/>
+                    <path d="M 355 54 Q 360 49 365 54 Q 370 49 375 54" fill="none" stroke="#1b4332" stroke-width="1.8" opacity="0.5"/>
+                    <path d="M -30 210 Q 130 95 290 185 Q 450 85 620 175 Q 730 115 830 190 L 830 260 L -30 260 Z" fill="url(#farMountain)"/>
+                    <ellipse cx="400" cy="195" rx="440" ry="24" fill="#ffffff" opacity="0.45"/>
+                    <path d="M -20 245 Q 190 145 410 225 Q 610 155 820 230 L 820 300 L -20 300 Z" fill="url(#midHill)"/>
+                    <path d="M 50 215 Q 200 180 360 222" fill="none" stroke="#b7e4c7" stroke-width="2" opacity="0.45"/>
+                    <path d="M 440 220 Q 610 180 770 224" fill="none" stroke="#b7e4c7" stroke-width="2" opacity="0.45"/>
+                    <g transform="translate(655, 165)">
+                        <polygon points="-38,0 0,-26 38,0" fill="#7f4f24"/>
+                        <rect x="-28" y="0" width="5" height="34" fill="#582f0e"/>
+                        <rect x="23" y="0" width="5" height="34" fill="#582f0e"/>
+                        <rect x="-32" y="22" width="64" height="6" fill="#936639"/>
+                    </g>
+                    <g transform="translate(75, 165)">
+                        <rect x="-5" y="45" width="10" height="35" fill="#582f0e"/>
+                        <polygon points="0,-25 -28,20 28,20" fill="#1b4332"/>
+                        <polygon points="0,-5 -34,42 34,42" fill="#2d6a4f"/>
+                        <polygon points="0,18 -38,62 38,62" fill="#40916c"/>
+                    </g>
+                    <g transform="translate(132, 185) scale(0.8)">
+                        <rect x="-5" y="45" width="10" height="35" fill="#582f0e"/>
+                        <polygon points="0,-25 -28,20 28,20" fill="#1b4332"/>
+                        <polygon points="0,-5 -34,42 34,42" fill="#2d6a4f"/>
+                        <polygon points="0,18 -38,62 38,62" fill="#40916c"/>
+                    </g>
+                    <g transform="translate(745, 175) scale(0.85)">
+                        <rect x="-5" y="45" width="10" height="35" fill="#582f0e"/>
+                        <polygon points="0,-25 -28,20 28,20" fill="#1b4332"/>
+                        <polygon points="0,-5 -34,42 34,42" fill="#2d6a4f"/>
+                        <polygon points="0,18 -38,62 38,62" fill="#40916c"/>
+                    </g>
+                    <path d="M -20 275 Q 250 230 520 265 Q 680 245 820 268 L 820 340 L -20 340 Z" fill="url(#nearHill)"/>
+                    <line x1="0" y1="268" x2="800" y2="268" stroke="#ddb892" stroke-width="4"/>
+                    <line x1="0" y1="282" x2="800" y2="282" stroke="#b08968" stroke-width="3"/>
+                    <rect x="60" y="262" width="8" height="35" fill="#7f5539"/>
+                    <rect x="210" y="260" width="8" height="35" fill="#7f5539"/>
+                    <rect x="395" y="260" width="8" height="35" fill="#7f5539"/>
+                    <rect x="585" y="260" width="8" height="35" fill="#7f5539"/>
+                    <rect x="735" y="262" width="8" height="35" fill="#7f5539"/>
+                `;
+            } else if (bgType === "store") {
+                return `
+                    <rect width="800" height="340" fill="#f8edeb"/>
+                    <rect x="35" y="38" width="215" height="205" rx="6" fill="#e8d5c4" stroke="#b5838d" stroke-width="3"/>
+                    <line x1="35" y1="103" x2="250" y2="103" stroke="#b5838d" stroke-width="4"/>
+                    <line x1="35" y1="168" x2="250" y2="168" stroke="#b5838d" stroke-width="4"/>
+                    <text x="72" y="90" font-size="26">👜</text>
+                    <text x="142" y="90" font-size="26">⌚</text>
+                    <text x="202" y="90" font-size="26">💄</text>
+                    <text x="72" y="155" font-size="26">👟</text>
+                    <text x="142" y="155" font-size="26">🎧</text>
+                    <text x="202" y="155" font-size="26">🕶️</text>
+                    <rect x="550" y="38" width="215" height="205" rx="6" fill="#e8d5c4" stroke="#b5838d" stroke-width="3"/>
+                    <line x1="550" y1="103" x2="765" y2="103" stroke="#b5838d" stroke-width="4"/>
+                    <line x1="550" y1="168" x2="765" y2="168" stroke="#b5838d" stroke-width="4"/>
+                    <text x="585" y="90" font-size="26">🎁</text>
+                    <text x="652" y="90" font-size="26">💍</text>
+                    <text x="712" y="90" font-size="26">🧸</text>
+                    <text x="585" y="155" font-size="26">📱</text>
+                    <text x="652" y="155" font-size="26">👗</text>
+                    <text x="712" y="155" font-size="26">💐</text>
+                    <rect x="0" y="260" width="800" height="80" fill="#d8e2dc"/>
+                `;
+            } else {
+                return `
+                    <rect width="800" height="340" fill="#fff0f3"/>
+                    <rect x="0" y="260" width="800" height="80" fill="#ffe5ec"/>
+                    <path d="M 120 22 Q 400 78 680 22" fill="none" stroke="#ff4d6d" stroke-width="3" stroke-dasharray="8 4"/>
+                    <text x="400" y="46" fill="#c9184a" font-size="16" font-weight="bold" text-anchor="middle">✨ HAPPY BIRTHDAY LAILA ✨</text>
+                    <rect x="545" y="195" width="215" height="85" rx="8" fill="#800f2f"/>
+                    <rect x="575" y="152" width="68" height="42" rx="4" fill="#2b2d42"/>
+                    <text x="609" y="178" fill="#80ed99" font-size="12" font-weight="bold" text-anchor="middle">LUNAS ✓</text>
+                `;
+            }
+        }
+
+        function renderLailaSVG(expr, xPos, isSpeaking) {
+            if (expr === "none") return "";
+            let leftEye = `
+                <ellipse cx="-19" cy="-8" rx="7" ry="8.5" fill="#ffffff"/>
+                <circle cx="-18" cy="-8" r="5" fill="#4a1942"/>
+                <circle cx="-18" cy="-8" r="2.5" fill="#1a0918"/>
+                <circle cx="-20" cy="-11" r="2" fill="#ffffff"/>
+                <path d="M -27 -13 Q -19 -19 -11 -13" fill="none" stroke="#2b1912" stroke-width="2.5" stroke-linecap="round"/>
+            `;
+            let rightEye = `
+                <ellipse cx="19" cy="-8" rx="7" ry="8.5" fill="#ffffff"/>
+                <circle cx="18" cy="-8" r="5" fill="#4a1942"/>
+                <circle cx="18" cy="-8" r="2.5" fill="#1a0918"/>
+                <circle cx="16" cy="-11" r="2" fill="#ffffff"/>
+                <path d="M 11 -13 Q 19 -19 27 -13" fill="none" stroke="#2b1912" stroke-width="2.5" stroke-linecap="round"/>
+            `;
+            let brows = `
+                <path d="M -27 -22 Q -19 -26 -11 -22" fill="none" stroke="#2b1912" stroke-width="2.3" stroke-linecap="round"/>
+                <path d="M 11 -22 Q 19 -26 27 -22" fill="none" stroke="#2b1912" stroke-width="2.3" stroke-linecap="round"/>
+            `;
+            let mouth = `<path d="M -9 14 Q 0 22 9 14" fill="none" stroke="#c9184a" stroke-width="2.8" stroke-linecap="round"/>`;
+            let arms = `
+                <path d="M -42 52 Q -54 90 -44 130" fill="none" stroke="#ffe5d9" stroke-width="13" stroke-linecap="round"/>
+                <path d="M 42 52 Q 54 90 44 130" fill="none" stroke="#ffe5d9" stroke-width="13" stroke-linecap="round"/>
+            `;
+            let extra = "";
+
+            if (expr === "excited" || expr === "beaming") {
+                leftEye = `<text x="-28" y="-2" font-size="18">⭐</text>`;
+                rightEye = `<text x="10" y="-2" font-size="18">⭐</text>`;
+                mouth = `<path d="M -14 11 Q 0 29 14 11 Z" fill="#ff4d6d" stroke="#c9184a" stroke-width="1.5"/>
+                         <path d="M -8 19 Q 0 25 8 19 Z" fill="#ffccd5"/>`;
+                extra = `<text x="-56" y="-28" font-size="18">✨</text><text x="42" y="-24" font-size="18">💖</text>`;
+            } else if (expr === "curious") {
+                leftEye = `
+                    <ellipse cx="-19" cy="-8" rx="7" ry="8" fill="#ffffff"/>
+                    <circle cx="-15" cy="-8" r="4.8" fill="#4a1942"/>
+                    <circle cx="-16" cy="-10" r="1.8" fill="#ffffff"/>
+                `;
+                rightEye = `
+                    <ellipse cx="19" cy="-8" rx="7" ry="8" fill="#ffffff"/>
+                    <circle cx="23" cy="-8" r="4.8" fill="#4a1942"/>
+                    <circle cx="22" cy="-10" r="1.8" fill="#ffffff"/>
+                `;
+                brows = `
+                    <path d="M -27 -21 L -11 -24" stroke="#2b1912" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M 11 -26 Q 19 -30 27 -24" fill="none" stroke="#2b1912" stroke-width="2.5" stroke-linecap="round"/>
+                `;
+                mouth = `<path d="M -8 16 Q 0 13 8 16" fill="none" stroke="#c9184a" stroke-width="2.6" stroke-linecap="round"/>`;
+                extra = `<text x="36" y="-28" font-size="20">❓</text>`;
+            } else if (expr === "glare" || expr === "annoyed") {
+                leftEye = `
+                    <path d="M -27 -11 L -11 -8 L -11 -4 L -27 -4 Z" fill="#ffffff"/>
+                    <circle cx="-15" cy="-7" r="4" fill="#4a1942"/>
+                    <line x1="-28" y1="-11" x2="-10" y2="-8" stroke="#2b1912" stroke-width="3"/>
+                `;
+                rightEye = `
+                    <path d="M 11 -8 L 27 -11 L 27 -4 L 11 -4 Z" fill="#ffffff"/>
+                    <circle cx="23" cy="-7" r="4" fill="#4a1942"/>
+                    <line x1="10" y1="-8" x2="28" y2="-11" stroke="#2b1912" stroke-width="3"/>
+                `;
+                brows = `
+                    <line x1="-27" y1="-22" x2="-10" y2="-14" stroke="#2b1912" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="10" y1="-14" x2="27" y2="-22" stroke="#2b1912" stroke-width="3" stroke-linecap="round"/>
+                `;
+                mouth = `<path d="M -11 18 Q 0 11 11 18" fill="none" stroke="#c9184a" stroke-width="2.8" stroke-linecap="round"/>`;
+                extra = `<text x="36" y="-32" font-size="20">💢</text>`;
+            } else if (expr === "pout_arms") {
+                brows = `
+                    <line x1="-27" y1="-22" x2="-10" y2="-14" stroke="#2b1912" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="10" y1="-14" x2="27" y2="-22" stroke="#2b1912" stroke-width="3" stroke-linecap="round"/>
+                `;
+                mouth = `<path d="M -10 18 Q 0 10 10 18" fill="none" stroke="#c9184a" stroke-width="3" stroke-linecap="round"/>`;
+                arms = `
+                    <rect x="-44" y="76" width="88" height="18" rx="9" fill="#ffe5d9" stroke="#e0b1a0" stroke-width="1.5"/>
+                    <path d="M -25 76 L 25 94" stroke="#e0b1a0" stroke-width="2"/>
+                `;
+                extra = `<text x="38" y="-30" font-size="20">😤</text>`;
+            } else if (expr === "shocked") {
+                leftEye = `
+                    <circle cx="-19" cy="-8" r="9.5" fill="#ffffff" stroke="#2b1912" stroke-width="2"/>
+                    <circle cx="-19" cy="-8" r="3" fill="#2b1912"/>
+                `;
+                rightEye = `
+                    <circle cx="19" cy="-8" r="9.5" fill="#ffffff" stroke="#2b1912" stroke-width="2"/>
+                    <circle cx="19" cy="-8" r="3" fill="#2b1912"/>
+                `;
+                brows = `
+                    <path d="M -27 -26 Q -19 -33 -11 -26" fill="none" stroke="#2b1912" stroke-width="2.5"/>
+                    <path d="M 11 -26 Q 19 -33 27 -26" fill="none" stroke="#2b1912" stroke-width="2.5"/>
+                `;
+                mouth = `<ellipse cx="0" cy="16" rx="9" ry="12" fill="#ff4d6d" stroke="#c9184a" stroke-width="2"/>`;
+                extra = `<text x="-58" y="-26" font-size="24">❗</text><text x="40" y="-26" font-size="22">⚡</text>`;
+            } else if (expr === "smirk") {
+                brows = `
+                    <line x1="-27" y1="-19" x2="-10" y2="-23" stroke="#2b1912" stroke-width="2.5"/>
+                    <line x1="10" y1="-24" x2="27" y2="-16" stroke="#2b1912" stroke-width="2.8"/>
+                `;
+                mouth = `<path d="M -11 14 Q 4 22 15 9" fill="none" stroke="#c9184a" stroke-width="3" stroke-linecap="round"/>`;
+                extra = `<text x="38" y="-28" font-size="20">😈</text>`;
+            } else if (expr === "sigh" || expr === "pout_cute") {
+                leftEye = `<path d="M -26 -9 Q -19 -3 -12 -9" fill="none" stroke="#2b1912" stroke-width="2.8" stroke-linecap="round"/>`;
+                rightEye = `<path d="M 12 -9 Q 19 -3 26 -9" fill="none" stroke="#2b1912" stroke-width="2.8" stroke-linecap="round"/>`;
+                mouth = `<circle cx="0" cy="15" r="4.5" fill="#ff758f"/>`;
+                extra = `<text x="38" y="-20" font-size="18">💨</text>`;
+            } else if (expr === "focused") {
+                mouth = `<path d="M -7 15 Q 0 19 7 15" fill="none" stroke="#c9184a" stroke-width="2.5" stroke-linecap="round"/>`;
+                extra = `<text x="38" y="-26" font-size="18">🧐</text>`;
+            } else if (expr === "laugh" || expr === "happy_wink") {
+                leftEye = `<path d="M -26 -9 Q -19 -18 -12 -9" fill="none" stroke="#2b1912" stroke-width="3" stroke-linecap="round"/>`;
+                if (expr === "laugh") {
+                    rightEye = `<path d="M 12 -9 Q 19 -18 26 -9" fill="none" stroke="#2b1912" stroke-width="3" stroke-linecap="round"/>`;
+                }
+                mouth = `<path d="M -13 11 Q 0 27 13 11 Z" fill="#ff4d6d" stroke="#c9184a" stroke-width="1.5"/>`;
+                extra = `<text x="38" y="-26" font-size="18">🎶</text>`;
+            }
+
+            const animClass = isSpeaking ? "char-speaking" : "";
+
+            return `
+                <g transform="translate(${xPos}, 192)">
+                    <g class="${animClass}">
+                        <path d="M -48 -20 Q -56 80 -38 115 L 38 115 Q 56 80 48 -20 Z" fill="#2b1912"/>
+                        <path d="M -44 10 Q -50 75 -34 112" fill="none" stroke="#4a2c1d" stroke-width="3"/>
+                        <path d="M 44 10 Q 50 75 34 112" fill="none" stroke="#4a2c1d" stroke-width="3"/>
+                        <path d="M -40 44 L 40 44 L 52 148 L -52 148 Z" fill="#ff758f"/>
+                        <path d="M -18 44 L 0 68 L 18 44 Z" fill="#fff0f3"/>
+                        <circle cx="0" cy="64" r="5" fill="#c9184a"/>
+                        ${arms}
+                        <rect x="-10" y="28" width="20" height="20" rx="6" fill="#ffe5d9"/>
+                        <path d="M -40 -12 C -40 -46, 40 -46, 40 -12 C 40 22, 22 36, 0 36 C -22 36, -40 22, -40 -12 Z" fill="#ffe5d9"/>
+                        <path d="M -41 -12 Q -36 -52 0 -52 Q 36 -52 41 -12 Q 26 -32 14 -18 Q 2 -34 -10 -18 Q -24 -32 -41 -12 Z" fill="#2b1912"/>
+                        <text x="20" y="-38" font-size="22">🎀</text>
+                        <ellipse cx="-24" cy="4" rx="7" ry="3.5" fill="#ff8fa3" opacity="0.75"/>
+                        <ellipse cx="24" cy="4" rx="7" ry="3.5" fill="#ff8fa3" opacity="0.75"/>
+                        ${brows}
+                        ${leftEye}
+                        ${rightEye}
+                        ${mouth}
+                        ${extra}
+                    </g>
+                    <rect x="-38" y="116" width="76" height="23" rx="11" fill="#ff4d6d" stroke="#fff0f3" stroke-width="1.5"/>
+                    <text x="0" y="131" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">LAILA</text>
+                </g>
+            `;
+        }
+
+        function renderNaufalSVG(expr, xPos, isSpeaking) {
+            if (expr === "none") return "";
+            let leftEye = `
+                <ellipse cx="-17" cy="-8" rx="6.5" ry="7.5" fill="#ffffff"/>
+                <circle cx="-17" cy="-8" r="4.5" fill="#1d3557"/>
+                <circle cx="-19" cy="-10" r="1.8" fill="#ffffff"/>
+            `;
+            let rightEye = `
+                <ellipse cx="17" cy="-8" rx="6.5" ry="7.5" fill="#ffffff"/>
+                <circle cx="17" cy="-8" r="4.5" fill="#1d3557"/>
+                <circle cx="15" cy="-10" r="1.8" fill="#ffffff"/>
+            `;
+            let brows = `
+                <path d="M -25 -20 Q -17 -23 -9 -20" fill="none" stroke="#1b1b1e" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M 9 -20 Q 17 -23 25 -20" fill="none" stroke="#1b1b1e" stroke-width="2.5" stroke-linecap="round"/>
+            `;
+            let mouth = `<path d="M -10 14 Q 0 22 10 14" fill="none" stroke="#1d3557" stroke-width="2.8" stroke-linecap="round"/>`;
+            let extra = "";
+
+            if (expr === "grin" || expr === "proud") {
+                leftEye = `<path d="M -24 -9 Q -17 -18 -10 -9" fill="none" stroke="#1b1b1e" stroke-width="3" stroke-linecap="round"/>`;
+                rightEye = `<path d="M 10 -9 Q 17 -18 24 -9" fill="none" stroke="#1b1b1e" stroke-width="3" stroke-linecap="round"/>`;
+                mouth = `<path d="M -15 11 Q 0 26 15 11 Z" fill="#ffffff" stroke="#1d3557" stroke-width="2"/>
+                         <line x1="-12" y1="15" x2="12" y2="15" stroke="#cbd5e1" stroke-width="1.5"/>`;
+                if (expr === "proud") {
+                    extra = `<text x="36" y="-26" font-size="20">😎</text>`;
+                } else {
+                    extra = `<text x="36" y="-24" font-size="18">😅</text>`;
+                }
+            } else if (expr === "sweat") {
+                brows = `
+                    <path d="M -25 -18 L -9 -23" stroke="#1b1b1e" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M 9 -23 L 25 -18" stroke="#1b1b1e" stroke-width="2.5" stroke-linecap="round"/>
+                `;
+                mouth = `<path d="M -10 17 Q 0 13 10 17" fill="none" stroke="#1d3557" stroke-width="2.5" stroke-linecap="round"/>`;
+                extra = `<text x="34" y="-20" font-size="20">💦</text>`;
+            } else if (expr === "shocked" || expr === "panic") {
+                leftEye = `
+                    <circle cx="-17" cy="-8" r="8.5" fill="#ffffff" stroke="#1b1b1e" stroke-width="2"/>
+                    <circle cx="-17" cy="-8" r="2.5" fill="#1b1b1e"/>
+                `;
+                rightEye = `
+                    <circle cx="17" cy="-8" r="8.5" fill="#ffffff" stroke="#1b1b1e" stroke-width="2"/>
+                    <circle cx="17" cy="-8" r="2.5" fill="#1b1b1e"/>
+                `;
+                mouth = `<path d="M -13 17 Q -6 10 0 17 Q 6 10 13 17" fill="none" stroke="#1d3557" stroke-width="2.8" stroke-linecap="round"/>`;
+                extra = `<text x="36" y="-26" font-size="22">😱</text><text x="-55" y="-18" font-size="18">💦</text>`;
+            } else if (expr === "resigned") {
+                leftEye = `<line x1="-24" y1="-9" x2="-10" y2="-9" stroke="#1b1b1e" stroke-width="3" stroke-linecap="round"/>`;
+                rightEye = `<line x1="10" y1="-9" x2="24" y2="-9" stroke="#1b1b1e" stroke-width="3" stroke-linecap="round"/>`;
+                mouth = `<path d="M -9 16 Q 0 20 9 16" fill="none" stroke="#1d3557" stroke-width="2.5" stroke-linecap="round"/>`;
+                extra = `<text x="36" y="-24" font-size="20">💸</text>`;
+            } else if (expr === "obedient") {
+                extra = `<text x="36" y="-24" font-size="18">🛍️</text>`;
+            }
+
+            const animClass = isSpeaking ? "char-speaking" : "";
+
+            return `
+                <g transform="translate(${xPos}, 186)">
+                    <g class="${animClass}">
+                        <path d="M -45 46 L 45 46 L 56 154 L -56 154 Z" fill="#3a86ff"/>
+                        <path d="M -18 46 L 0 72 L 18 46 Z" fill="#ffffff"/>
+                        <line x1="0" y1="72" x2="0" y2="154" stroke="#1d3557" stroke-width="2"/>
+                        <path d="M -45 54 Q -56 95 -46 135" fill="none" stroke="#f8d5c2" stroke-width="14" stroke-linecap="round"/>
+                        <path d="M 45 54 Q 56 95 46 135" fill="none" stroke="#f8d5c2" stroke-width="14" stroke-linecap="round"/>
+                        <rect x="-11" y="30" width="22" height="20" rx="6" fill="#f8d5c2"/>
+                        <path d="M -40 -14 C -40 -48, 40 -48, 40 -14 C 40 22, 22 38, 0 38 C -22 38, -40 22, -40 -14 Z" fill="#f8d5c2"/>
+                        <path d="M -42 -14 C -44 -56, 44 -56, 42 -14 C 30 -32, 16 -22, 4 -34 C -8 -22, -24 -34, -42 -14 Z" fill="#1b1b1e"/>
+                        <path d="M -40 -16 L -42 4 L -35 -6 Z" fill="#1b1b1e"/>
+                        <path d="M 40 -16 L 42 4 L 35 -6 Z" fill="#1b1b1e"/>
+                        ${brows}
+                        ${leftEye}
+                        ${rightEye}
+                        ${mouth}
+                        ${extra}
+                    </g>
+                    <rect x="-40" y="122" width="80" height="23" rx="11" fill="#1d3557" stroke="#fff0f3" stroke-width="1.5"/>
+                    <text x="0" y="137" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">NAUFAL</text>
+                </g>
+            `;
+        }
+
+        function renderPropSVG(prop) {
+            if (prop === "dream_gift") {
+                return `
+                    <g transform="translate(530, 125)">
+                        <ellipse cx="0" cy="0" rx="102" ry="60" fill="#fff" opacity="0.94"/>
+                        <circle cx="-90" cy="56" r="10" fill="#fff" opacity="0.88"/>
+                        <circle cx="-112" cy="76" r="6" fill="#fff" opacity="0.78"/>
+                        <text x="0" y="8" font-size="46" text-anchor="middle">🎁</text>
+                        <text x="0" y="34" fill="#c9184a" font-size="11" font-weight="bold" text-anchor="middle">Kado Besar + Pita Merah!</text>
+                    </g>
+                `;
+            } else if (prop === "basket") {
+                return `<text x="400" y="248" font-size="48" text-anchor="middle">🛒</text>`;
+            } else if (prop === "wishlist") {
+                return `<text x="400" y="228" font-size="44" text-anchor="middle">📋✨</text>`;
+            } else if (prop === "crying_wallet") {
+                return `
+                    <g transform="translate(400, 218)">
+                        <text x="0" y="0" font-size="46" text-anchor="middle">👛😭</text>
+                        <text x="0" y="25" fill="#c9184a" font-size="11" font-weight="bold" text-anchor="middle">Saldo Kritis!</text>
+                    </g>
+                `;
+            } else if (prop === "gift_box") {
+                return `<text x="400" y="238" font-size="54" text-anchor="middle">🎁💖</text>`;
+            }
+            return "";
+        }
+
+        function renderStep(stepId) {
+            const step = VN_SCRIPT[stepId];
+            if (!step) return;
+            currentStepId = stepId;
+
+            if (autoTimer) clearTimeout(autoTimer);
+
+            document.getElementById("sceneTitle").textContent = step.scene;
+            document.getElementById("sceneLoc").textContent = step.loc;
+
+            setBGM(step.bgm);
+
+            const lailaX = step.naufal === "none" ? 365 : 245;
+            const naufalX = 555;
+            const lailaSpeaking = step.speakerType === "laila";
+            const naufalSpeaking = step.speakerType === "naufal";
+
+            document.getElementById("stageSvg").innerHTML =
+                renderBackgroundSVG(step.bg) +
+                renderLailaSVG(step.laila, lailaX, lailaSpeaking) +
+                renderNaufalSVG(step.naufal, naufalX, naufalSpeaking) +
+                renderPropSVG(step.prop);
+
+            const badge = document.getElementById("speakerBadge");
+            badge.textContent = step.speaker;
+            badge.className = "speaker-badge speaker-" + step.speakerType;
+
+            const choicesBox = document.getElementById("choicesBox");
+            const btnNext = document.getElementById("btnNext");
+            if (step.isChoice) {
+                choicesBox.style.display = "flex";
+                btnNext.style.display = "none";
+            } else {
+                choicesBox.style.display = "none";
+                btnNext.style.display = "inline-block";
+                btnNext.textContent = step.isEndOfVN ? "Lanjut Side Quest 🎁 ▶" : "Lanjut ▶";
+            }
+
+            document.getElementById("btnPrev").disabled = historyStack.length === 0;
+
+            if (!readLog.some(item => item.id === step.id)) {
+                readLog.push({ id: step.id, speaker: step.speaker, text: step.text });
+            }
+
+            startTypewriter(step.text, () => {
+                if (autoPlay && !step.isChoice && !step.isEndOfVN) {
+                    autoTimer = setTimeout(() => nextStep(), 1800);
+                }
+            });
+        }
+
+        function startTypewriter(text, onComplete) {
+            if (typingInterval) clearInterval(typingInterval);
+            const textEl = document.getElementById("dialogueText");
+            textEl.textContent = "";
+            fullCurrentText = text;
+            isTyping = true;
+            let idx = 0;
+
+            typingInterval = setInterval(() => {
+                textEl.textContent += text.charAt(idx);
+                idx++;
+                if (idx >= text.length) {
+                    clearInterval(typingInterval);
+                    isTyping = false;
+                    if (onComplete) onComplete();
+                }
+            }, 22);
+        }
+
+        function finishTypingImmediately() {
+            if (typingInterval) clearInterval(typingInterval);
+            document.getElementById("dialogueText").textContent = fullCurrentText;
+            isTyping = false;
+        }
+
+        function handleDialogueClick(e) {
+            if (e.target.closest(".choice-btn") || e.target.closest(".vn-controls")) return;
+            const step = VN_SCRIPT[currentStepId];
+            if (isTyping) {
+                finishTypingImmediately();
+            } else if (!step.isChoice) {
+                nextStep();
+            }
+        }
+
+        function nextStep() {
+            const step = VN_SCRIPT[currentStepId];
+            if (isTyping) {
+                finishTypingImmediately();
+                return;
+            }
+            if (step.isChoice) return;
+
+            playSFX("click");
+            if (step.isEndOfVN) {
+                autoPlay = false;
+                updateAutoButton();
+                document.getElementById("questIntroOverlay").style.display = "flex";
+                return;
+            }
+
+            historyStack.push(currentStepId);
+            renderStep(step.next);
+        }
+
+        function prevStep() {
+            if (historyStack.length === 0) return;
+            playSFX("click");
+            const prevId = historyStack.pop();
+            renderStep(prevId);
+        }
+
+        function chooseRoute(route, e) {
+            e.stopPropagation();
+            playSFX("choice");
+            historyStack.push(currentStepId);
+            if (route === "A") {
+                renderStep(10);
+            } else {
+                renderStep(13);
+            }
+        }
+
+        function toggleAuto() {
+            autoPlay = !autoPlay;
+            updateAutoButton();
+            if (autoPlay && !isTyping && !VN_SCRIPT[currentStepId].isChoice) {
+                autoTimer = setTimeout(() => nextStep(), 1200);
+            }
+        }
+
+        function updateAutoButton() {
+            const btn = document.getElementById("btnAuto");
+            btn.textContent = autoPlay ? "⏩ Auto: ON" : "⏩ Auto: OFF";
+            btn.style.background = autoPlay ? "#ff4d6d" : "#4a1942";
+        }
+
+        function openLog() {
+            const body = document.getElementById("logBody");
+            body.innerHTML = readLog.map(item => `
+                <div class="log-item">
+                    <strong>${item.speaker}</strong>
+                    <div>${item.text}</div>
+                </div>
+            `).join("");
+            document.getElementById("logModal").style.display = "flex";
+        }
+
+        function closeLog() {
+            document.getElementById("logModal").style.display = "none";
+        }
+
+        /* ==========================================================================
+           3. SIDE QUEST MINI-GAME & MODAL SURAT SPESIAL
+           ========================================================================== */
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const container = document.getElementById("canvasContainer");
+
+        let player = {
+            x: 50, y: 280, width: 30, height: 30,
+            color: '#ff758f',
+            dx: 0, dy: 0,
+            speed: 4.5, jumpPower: -11,
+            grounded: false
+        };
+
+        const gravity = 0.5;
+        const keys = {};
+
+        const platforms = [
+            { x: 0, y: 350, width: 220, height: 50 },
+            { x: 260, y: 280, width: 130, height: 20 },
+            { x: 430, y: 210, width: 140, height: 20 },
+            { x: 620, y: 310, width: 160, height: 90 },
+            { x: 830, y: 240, width: 120, height: 20 },
+            { x: 1000, y: 170, width: 130, height: 20 },
+            { x: 1180, y: 290, width: 180, height: 110 },
+            { x: 1410, y: 220, width: 130, height: 20 },
+            { x: 1590, y: 150, width: 210, height: 250 }
+        ];
+
+        let obstacles = [
+            { x: 640, y: 285, width: 25, height: 25, speed: 2.2, minX: 620, maxX: 755 },
+            { x: 1200, y: 265, width: 25, height: 25, speed: -2.6, minX: 1180, maxX: 1335 },
+            { x: 1420, y: 195, width: 25, height: 25, speed: 2.0, minX: 1410, maxX: 1515 }
+        ];
+
+        let items = [
+            { x: 485, y: 170, symbol: '❤️', collected: false },
+            { x: 1050, y: 130, symbol: '💼', collected: false },
+            { x: 1460, y: 180, symbol: '💍', collected: false }
+        ];
+
+        const cake = { x: 1680, y: 90, width: 40, height: 40, active: false };
+        let isGameRunning = false;
+        let isGameOver = false;
+
+        function launchSideQuest() {
+            playSFX("choice");
+            document.getElementById("vnWrapper").style.display = "none";
+            document.getElementById("openLogBtn").style.display = "none";
+            document.getElementById("gameWrapper").style.display = "flex";
+            setBGM("quest");
+
+            resetPlayerPos();
+            items.forEach(i => i.collected = false);
+            cake.active = false;
+            isGameOver = false;
+
+            if (!isGameRunning) {
+                isGameRunning = true;
+                loop();
+            }
+            canvas.focus();
+        }
+
+        function openLetterModal() {
+            document.getElementById("wishModal").style.display = "none";
+            document.getElementById("letterModal").style.display = "block";
+        }
+
+        function closeLetterModal() {
+            document.getElementById("letterModal").style.display = "none";
+            document.getElementById("wishModal").style.display = "block";
+        }
+
+        function replayFullVN() {
+            document.getElementById("wishModal").style.display = "none";
+            document.getElementById("letterModal").style.display = "none";
+            document.getElementById("gameWrapper").style.display = "none";
+            document.getElementById("questIntroOverlay").style.display = "none";
+            document.getElementById("openLogBtn").style.display = "inline-block";
+            document.getElementById("vnWrapper").style.display = "block";
+            isGameOver = true;
+            isGameRunning = false;
+            historyStack = [];
+            renderStep(0);
+        }
+
+        window.addEventListener("keydown", (e) => {
+            if (document.getElementById("gameWrapper").style.display === "flex") {
+                if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.code) > -1) {
+                    e.preventDefault();
+                }
+            }
+            keys[e.code] = true;
+        });
+
+        window.addEventListener("keyup", (e) => {
+            keys[e.code] = false;
+        });
+
+        function bindControl(btnId, keyCode) {
+            const btn = document.getElementById(btnId);
+            const press = (e) => { e.preventDefault(); keys[keyCode] = true; };
+            const release = (e) => { e.preventDefault(); keys[keyCode] = false; };
+
+            btn.addEventListener("touchstart", press, { passive: false });
+            btn.addEventListener("touchend", release, { passive: false });
+            btn.addEventListener("touchcancel", release, { passive: false });
+            btn.addEventListener("mousedown", press);
+            btn.addEventListener("mouseup", release);
+            btn.addEventListener("mouseleave", release);
+        }
+
+        bindControl("btnLeft", "ArrowLeft");
+        bindControl("btnRight", "ArrowRight");
+        bindControl("btnJump", "Space");
+
+        function updateGame() {
+            if (keys["ArrowRight"] || keys["KeyD"]) player.dx = player.speed;
+            else if (keys["ArrowLeft"] || keys["KeyA"]) player.dx = -player.speed;
+            else player.dx = 0;
+
+            if ((keys["Space"] || keys["ArrowUp"] || keys["KeyW"]) && player.grounded) {
+                player.dy = player.jumpPower;
+                player.grounded = false;
+                playSFX("jump");
+            }
+
+            player.dy += gravity;
+            player.x += player.dx;
+            player.y += player.dy;
+
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+            player.grounded = false;
+            platforms.forEach(p => {
+                if (
+                    player.x < p.x + p.width &&
+                    player.x + player.width > p.x &&
+                    player.y + player.height >= p.y &&
+                    player.y + player.height - player.dy <= p.y + 12
+                ) {
+                    player.y = p.y - player.height;
+                    player.dy = 0;
+                    player.grounded = true;
+                }
+            });
+
+            obstacles.forEach(obs => {
+                obs.x += obs.speed;
+                if (obs.x <= obs.minX || obs.x >= obs.maxX) {
+                    obs.speed *= -1;
+                }
+
+                if (
+                    player.x < obs.x + obs.width &&
+                    player.x + player.width > obs.x &&
+                    player.y < obs.y + obs.height &&
+                    player.y + player.height > obs.y
+                ) {
+                    playSFX("hit");
+                    resetPlayerPos();
+                }
+            });
+
+            if (player.y > canvas.height) {
+                playSFX("hit");
+                resetPlayerPos();
+            }
+
+            items.forEach(item => {
+                if (!item.collected &&
+                    Math.hypot((player.x + player.width / 2) - (item.x + 10), (player.y + player.height / 2) - item.y) < 35) {
+                    item.collected = true;
+                    playSFX("collect");
+                }
+            });
+
+            if (items.every(i => i.collected)) {
+                cake.active = true;
+            }
+
+            if (cake.active &&
+                player.x < cake.x + cake.width &&
+                player.x + player.width > cake.x &&
+                player.y < cake.y + cake.height &&
+                player.y + player.height > cake.y) {
+                triggerWin();
+            }
+
+            container.scrollLeft = player.x - container.clientWidth / 2;
+        }
+
+        function resetPlayerPos() {
+            player.x = 50;
+            player.y = 280;
+            player.dy = 0;
+        }
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#590d22';
+            platforms.forEach(p => {
+                ctx.fillRect(p.x, p.y, p.width, p.height);
+                ctx.strokeStyle = '#ff4d6d';
+                ctx.strokeRect(p.x, p.y, p.width, p.height);
+            });
+
+            ctx.fillStyle = '#ff70a6';
+            obstacles.forEach(obs => {
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                ctx.font = '14px Arial';
+                ctx.fillText('⚡', obs.x + 4, obs.y + 18);
+            });
+
+            ctx.font = '24px Arial';
+            items.forEach(item => {
+                if (!item.collected) {
+                    ctx.fillText(item.symbol, item.x, item.y);
+                }
+            });
+
+            if (cake.active) {
+                ctx.font = '40px Arial';
+                ctx.fillText('🎂', cake.x, cake.y + 35);
+            } else {
+                ctx.fillStyle = '#ffb3c1';
+                ctx.font = '13px Courier New';
+                ctx.fillText('🔒 Kumpulkan 3 Ikon!', cake.x - 45, cake.y - 10);
+            }
+
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.strokeStyle = '#ffffff';
+            ctx.strokeRect(player.x, player.y, player.width, player.height);
+
+            ctx.fillStyle = '#ffccd5';
+            ctx.font = '14px Courier New';
+            let collectedCount = items.filter(i => i.collected).length;
+            let statusIcons = items.map(i => i.collected ? '✅' : '❓').join(' ');
+            let hudX = Math.max(25, container.scrollLeft + 25);
+            ctx.fillText(`Ikon Terkumpul [${collectedCount}/3] : ${statusIcons}`, hudX, 30);
+        }
+
+        function loop() {
+            if (!isGameOver && isGameRunning) {
+                updateGame();
+                drawGame();
+                requestAnimationFrame(loop);
+            }
+        }
+
+        function triggerWin() {
+            isGameOver = true;
+            isGameRunning = false;
+            keys["ArrowLeft"] = false;
+            keys["ArrowRight"] = false;
+            keys["Space"] = false;
+            playSFX("win");
+            setBGM("ending");
+            document.getElementById("wishModal").style.display = "block";
+        }
+
+        function restartGame() {
+            resetPlayerPos();
+            items.forEach(i => i.collected = false);
+            cake.active = false;
+            isGameOver = false;
+            isGameRunning = true;
+            setBGM("quest");
+            document.getElementById("wishModal").style.display = "none";
+            document.getElementById("letterModal").style.display = "none";
+            canvas.focus();
+            loop();
+        }
+    </script>
+</body>
+</html>
